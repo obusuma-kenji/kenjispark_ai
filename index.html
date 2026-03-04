@@ -1,0 +1,1020 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>kenjispark｜AIで士業を拡張する。実務をAIに翻訳する専門ラボ</title>
+  <meta name="description" content="AIで士業の業務を拡張する専門ラボ。NotebookLM・ChatGPT・n8nを活用し、定型業務を70〜80%削減。就業規則チェック、FAQ生成、AIヘルプデスク、AI業務翻訳など、実務で使えるAIを設計します。" />
+  <meta name="theme-color" content="#FF7A00" />
+  <meta property="og:title" content="kenjispark｜AIで士業を拡張する専門ラボ" />
+  <meta property="og:description" content="NotebookLM・ChatGPT・n8nを組み合わせ、定型業務を70〜80%削減。実務で使えるAIを設計します。" />
+  <meta property="og:type" content="website" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;600;700;900&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg1: #FF6A00;
+      --bg2: #FFA800;
+      --bg3: #FFD08A;
+      --ink: #14110e;
+      --muted: rgba(20,17,14,.72);
+      --card: rgba(255,255,255,.72);
+      --card2: rgba(255,255,255,.58);
+      --stroke: rgba(20,17,14,.12);
+      --shadow: 0 24px 70px rgba(0,0,0,.20);
+      --shadow2: 0 14px 40px rgba(0,0,0,.16);
+      --radius: 18px;
+      --radius2: 26px;
+      --max: 1120px;
+      --accent: #1A1A1A;
+      --accent2: #7A2E00;
+      --good: #0ea65f;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: "Noto Sans JP", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(1200px 600px at 15% 10%, rgba(255,255,255,.32), transparent 60%),
+        radial-gradient(1000px 560px at 85% 15%, rgba(255,255,255,.20), transparent 60%),
+        linear-gradient(180deg, var(--bg1) 0%, var(--bg2) 42%, var(--bg3) 100%);
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    .wrap { max-width: var(--max); margin: 0 auto; padding: 0 22px; }
+
+    /* ── Topbar ── */
+    .topbar {
+      position: sticky; top: 0; z-index: 50;
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      background: rgba(255, 214, 160, .55);
+      border-bottom: 1px solid rgba(20,17,14,.10);
+    }
+    .topbar .inner {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 14px;
+      padding: 12px 0;
+    }
+    .brand {
+      display: flex; align-items: center; gap: 10px;
+      font-weight: 900;
+      letter-spacing: .02em;
+      white-space: nowrap;
+    }
+    .logo {
+      width: 34px; height: 34px; border-radius: 12px;
+      background: linear-gradient(135deg, #111, #6a2b00);
+      box-shadow: 0 10px 24px rgba(0,0,0,.18);
+      flex: 0 0 auto;
+      position: relative;
+      overflow: hidden;
+    }
+    .logo::after {
+      content: "K";
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      color: rgba(255,255,255,.85);
+      font-weight: 900; font-size: 16px;
+      letter-spacing: 0;
+    }
+    .nav {
+      display: flex; align-items: center; gap: 16px;
+      font-weight: 800; font-size: 13px;
+      color: rgba(20,17,14,.72);
+      white-space: nowrap;
+    }
+    .nav a { transition: color .15s; }
+    .nav a:hover { color: rgba(20,17,14,.95); }
+    .pill {
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.55);
+      border: 1px solid rgba(20,17,14,.10);
+      font-weight: 900; font-size: 12px;
+      color: rgba(20,17,14,.75);
+    }
+
+    /* ── Buttons ── */
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+      padding: 12px 16px;
+      border-radius: 999px;
+      font-weight: 900; font-size: 14px;
+      border: 1px solid rgba(20,17,14,.14);
+      background: rgba(255,255,255,.55);
+      box-shadow: 0 10px 28px rgba(0,0,0,.10);
+      transition: transform .15s ease, filter .15s ease, background .15s ease;
+      user-select: none; cursor: pointer;
+    }
+    .btn:hover { transform: translateY(-1px); filter: brightness(1.02); }
+    .btn:active { transform: translateY(0); }
+    .btn.primary {
+      background: linear-gradient(135deg, #111 0%, #3a1700 60%, #6a2b00 100%);
+      color: rgba(255,255,255,.92);
+      border: none;
+      box-shadow: 0 16px 45px rgba(0,0,0,.20);
+    }
+    .btn.primary:hover { box-shadow: 0 20px 55px rgba(0,0,0,.26); }
+    .btn.dark {
+      background: rgba(20,17,14,.92);
+      color: rgba(255,255,255,.92);
+      border: 1px solid rgba(255,255,255,.12);
+    }
+    .btn.ghost { background: rgba(255,255,255,.35); }
+
+    /* ── Hero ── */
+    .hero { padding: 34px 0 14px; }
+    .heroCard {
+      border-radius: var(--radius2);
+      background: linear-gradient(180deg, rgba(255,255,255,.70), rgba(255,255,255,.52));
+      border: 1px solid rgba(20,17,14,.12);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      position: relative;
+    }
+    .heroCard::before {
+      content: "";
+      position: absolute; inset: 0;
+      background: url("kenjispark-hero-bg.png") center center / cover no-repeat;
+      opacity: .12;
+      z-index: 0;
+      pointer-events: none;
+    }
+    .heroCard::after {
+      content: "";
+      position: absolute; inset: 0;
+      background: linear-gradient(
+        135deg,
+        rgba(255,255,255,.88) 0%,
+        rgba(255,255,255,.60) 45%,
+        rgba(255,255,255,.30) 100%
+      );
+      z-index: 0;
+      pointer-events: none;
+    }
+    .heroCard > * { position: relative; z-index: 1; }
+    .heroImgRow {
+      padding: 0 22px 22px;
+      position: relative; z-index: 1;
+    }
+    .heroImgRow img {
+      width: 100%;
+      border-radius: 14px;
+      border: 1px solid rgba(20,17,14,.08);
+      box-shadow: 0 12px 36px rgba(0,0,0,.12);
+    }
+    .heroTop {
+      padding: 22px 22px 0;
+      display: flex; flex-wrap: wrap; gap: 10px;
+      align-items: center; justify-content: space-between;
+    }
+    .heroTop .chips { display: flex; flex-wrap: wrap; gap: 10px; }
+    .chip {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 8px 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.62);
+      border: 1px solid rgba(20,17,14,.10);
+      font-weight: 900; font-size: 12px;
+      color: rgba(20,17,14,.75);
+      white-space: nowrap;
+    }
+    .chip b { color: rgba(20,17,14,.92); }
+    .heroBody {
+      padding: 10px 22px 22px;
+      display: grid;
+      grid-template-columns: 1.15fr .85fr;
+      gap: 16px;
+      align-items: start;
+    }
+    h1 {
+      margin: 10px 0 10px;
+      font-size: clamp(28px, 4.0vw, 44px);
+      line-height: 1.12;
+      letter-spacing: -0.02em;
+      font-weight: 900;
+    }
+    .lead {
+      margin: 0 0 14px;
+      color: rgba(20,17,14,.72);
+      font-size: 15px;
+      line-height: 1.9;
+      max-width: 64ch;
+    }
+    .heroActions { display: flex; gap: 10px; flex-wrap: wrap; }
+
+    .side { display: grid; gap: 12px; }
+    .sideCard {
+      border-radius: var(--radius);
+      background: rgba(255,255,255,.60);
+      border: 1px solid rgba(20,17,14,.10);
+      box-shadow: var(--shadow2);
+      padding: 14px;
+    }
+    .sideCard h3 { margin: 0 0 6px; font-size: 14px; letter-spacing: -.01em; font-weight: 700; }
+    .sideCard p { margin: 0; color: rgba(20,17,14,.70); font-size: 13px; line-height: 1.85; }
+
+    /* ── Sections ── */
+    section { padding: 22px 0; }
+    .sectionTitle {
+      margin: 6px 0 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .sectionTitle h2 { margin: 0; font-size: 22px; letter-spacing: -.01em; font-weight: 900; }
+    .sectionTitle p {
+      margin: 0; color: rgba(20,17,14,.70);
+      font-size: 13px; line-height: 1.75;
+      max-width: 72ch;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+    .card {
+      border-radius: var(--radius);
+      background: rgba(255,255,255,.62);
+      border: 1px solid rgba(20,17,14,.10);
+      box-shadow: var(--shadow2);
+      padding: 16px;
+    }
+    .card h3 { margin: 0 0 8px; font-size: 15px; letter-spacing: -.01em; font-weight: 700; }
+    .card p { margin: 0; color: rgba(20,17,14,.70); font-size: 13px; line-height: 1.85; }
+    .tiny { font-size: 12px; color: rgba(20,17,14,.62); }
+
+    /* ── Stats ── */
+    .statsGrid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+    .statCard {
+      border-radius: var(--radius);
+      background: rgba(255,255,255,.60);
+      border: 1px solid rgba(20,17,14,.10);
+      box-shadow: var(--shadow2);
+      padding: 18px 14px;
+      text-align: center;
+    }
+    .statCard .num {
+      font-size: 32px; font-weight: 900;
+      letter-spacing: -.02em;
+      background: linear-gradient(135deg, #111, #7a2e00);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1.1;
+    }
+    .statCard .label {
+      margin-top: 6px;
+      font-size: 12px; font-weight: 700;
+      color: rgba(20,17,14,.65);
+      line-height: 1.6;
+    }
+
+    /* ── Media ── */
+    .mediaGrid {
+      display: grid;
+      grid-template-columns: 1.05fr .95fr;
+      gap: 12px;
+      align-items: stretch;
+    }
+    .frame {
+      position: relative;
+      width: 100%;
+      padding-top: 56.25%;
+      border-radius: 18px;
+      overflow: hidden;
+      border: 1px solid rgba(20,17,14,.10);
+      background: #000;
+    }
+    .frame video {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      object-fit: cover;
+    }
+    audio {
+      width: 100%;
+      border-radius: 14px;
+    }
+
+    /* ── iframe ── */
+    iframe {
+      width: 100%;
+      height: 760px;
+      border-radius: 18px;
+      border: 1px solid rgba(20,17,14,.12);
+      background: rgba(255,255,255,.45);
+      box-shadow: 0 10px 30px rgba(0,0,0,.12);
+    }
+
+    /* ── Download row ── */
+    .downloadRow {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 14px; flex-wrap: wrap;
+      padding: 16px;
+      border-radius: var(--radius2);
+      background: rgba(255,255,255,.62);
+      border: 1px solid rgba(20,17,14,.10);
+      box-shadow: var(--shadow2);
+    }
+    .downloadRow h3 { margin: 0 0 6px; font-size: 16px; letter-spacing: -.01em; font-weight: 700; }
+    .downloadRow p { margin: 0; color: rgba(20,17,14,.70); font-size: 13px; line-height: 1.85; }
+
+    /* ── Steps ── */
+    .stepsGrid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+    .stepCard {
+      border-radius: var(--radius);
+      background: rgba(255,255,255,.60);
+      border: 1px solid rgba(20,17,14,.10);
+      box-shadow: var(--shadow2);
+      padding: 18px 16px;
+      position: relative;
+    }
+    .stepCard .stepNum {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 32px; height: 32px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #111, #6a2b00);
+      color: rgba(255,255,255,.9);
+      font-weight: 900; font-size: 14px;
+      margin-bottom: 10px;
+    }
+    .stepCard h3 { margin: 0 0 8px; font-size: 15px; font-weight: 700; }
+    .stepCard p { margin: 0; color: rgba(20,17,14,.70); font-size: 13px; line-height: 1.85; }
+
+    /* ── Contact Form ── */
+    .formCard {
+      border-radius: var(--radius2);
+      background: linear-gradient(180deg, rgba(255,255,255,.78), rgba(255,255,255,.58));
+      border: 1px solid rgba(20,17,14,.10);
+      box-shadow: var(--shadow);
+      padding: 32px 28px;
+    }
+    .formCard h2 {
+      font-size: clamp(20px, 2.8vw, 28px);
+      font-weight: 900; letter-spacing: -.02em;
+      margin-bottom: 6px;
+    }
+    .formCard > p {
+      color: rgba(20,17,14,.65);
+      font-size: 13px; line-height: 1.75;
+      margin-bottom: 22px;
+    }
+    .formGrid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px 20px;
+    }
+    .formGroup { display: flex; flex-direction: column; gap: 5px; }
+    .formGroup.full { grid-column: 1 / -1; }
+    .formGroup label {
+      font-size: 13px; font-weight: 700;
+      color: rgba(20,17,14,.78);
+    }
+    .formGroup label .req {
+      font-size: 11px; font-weight: 900;
+      color: #d14800;
+      margin-left: 4px;
+    }
+    .formGroup input,
+    .formGroup select,
+    .formGroup textarea {
+      font-family: inherit;
+      font-size: 14px;
+      padding: 10px 14px;
+      border-radius: 12px;
+      border: 1px solid rgba(20,17,14,.14);
+      background: rgba(255,255,255,.75);
+      color: var(--ink);
+      outline: none;
+      transition: border-color .15s, box-shadow .15s;
+      width: 100%;
+    }
+    .formGroup input:focus,
+    .formGroup select:focus,
+    .formGroup textarea:focus {
+      border-color: rgba(255,106,0,.5);
+      box-shadow: 0 0 0 3px rgba(255,106,0,.12);
+    }
+    .formGroup textarea { resize: vertical; }
+    .formGroup select { cursor: pointer; }
+    .formSubmitRow {
+      grid-column: 1 / -1;
+      display: flex; align-items: center;
+      gap: 14px; flex-wrap: wrap;
+      padding-top: 6px;
+    }
+    .formSubmitRow .btn {
+      font-size: 15px;
+      padding: 14px 28px;
+    }
+    .formSubmitRow .note {
+      font-size: 12px;
+      color: rgba(20,17,14,.52);
+      line-height: 1.7;
+    }
+    @media (max-width: 640px) {
+      .formGrid { grid-template-columns: 1fr; }
+      .formCard { padding: 24px 18px; }
+    }
+
+    /* ── CTA ── */
+    .ctaCard {
+      border-radius: var(--radius2);
+      background: linear-gradient(135deg, rgba(20,17,14,.92), rgba(90,40,0,.88));
+      border: 1px solid rgba(255,255,255,.08);
+      box-shadow: var(--shadow);
+      padding: 36px 28px;
+      text-align: center;
+      color: rgba(255,255,255,.92);
+    }
+    .ctaCard h2 {
+      font-size: clamp(22px, 3vw, 32px);
+      font-weight: 900;
+      letter-spacing: -.02em;
+      line-height: 1.3;
+      margin-bottom: 10px;
+    }
+    .ctaCard p {
+      color: rgba(255,255,255,.62);
+      font-size: 14px; line-height: 1.85;
+      max-width: 56ch;
+      margin: 0 auto 18px;
+    }
+    .ctaCard .btn.primary {
+      background: linear-gradient(135deg, #FF6A00, #FFA800);
+      color: var(--ink);
+      font-size: 16px;
+      padding: 14px 24px;
+      box-shadow: 0 12px 36px rgba(255,106,0,.35);
+    }
+
+    /* ── Contact Form ── */
+    .formCard {
+      border-radius: var(--radius2);
+      background: linear-gradient(180deg, rgba(255,255,255,.78), rgba(255,255,255,.58));
+      border: 1px solid rgba(20,17,14,.12);
+      box-shadow: var(--shadow);
+      padding: 32px 28px;
+    }
+    .formCard h2 {
+      font-size: clamp(20px, 2.8vw, 28px);
+      font-weight: 900;
+      letter-spacing: -.02em;
+      margin-bottom: 8px;
+    }
+    .formCard > p {
+      color: rgba(20,17,14,.68);
+      font-size: 14px; line-height: 1.85;
+      margin-bottom: 22px;
+      max-width: 64ch;
+    }
+    .formGrid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px 18px;
+    }
+    .formGroup { display: flex; flex-direction: column; gap: 5px; }
+    .formGroup.full { grid-column: 1 / -1; }
+    .formGroup label {
+      font-size: 13px; font-weight: 700;
+      color: rgba(20,17,14,.78);
+    }
+    .req {
+      font-size: 11px; font-weight: 900;
+      color: #c0440a;
+      margin-left: 4px;
+    }
+    .formGroup input,
+    .formGroup select,
+    .formGroup textarea {
+      font-family: inherit;
+      font-size: 14px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(20,17,14,.14);
+      background: rgba(255,255,255,.72);
+      color: var(--ink);
+      outline: none;
+      transition: border-color .15s, box-shadow .15s;
+      resize: vertical;
+    }
+    .formGroup input:focus,
+    .formGroup select:focus,
+    .formGroup textarea:focus {
+      border-color: rgba(255,106,0,.55);
+      box-shadow: 0 0 0 3px rgba(255,106,0,.12);
+    }
+    .formGroup input::placeholder,
+    .formGroup textarea::placeholder {
+      color: rgba(20,17,14,.32);
+    }
+    .formGroup select {
+      appearance: none;
+      -webkit-appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2314110e' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      padding-right: 32px;
+      cursor: pointer;
+    }
+    .formSubmitRow {
+      grid-column: 1 / -1;
+      display: flex; align-items: center; gap: 14px;
+      flex-wrap: wrap;
+      padding-top: 6px;
+    }
+    .formSubmitRow .btn { font-size: 15px; padding: 14px 24px; }
+    .formSubmitRow .note {
+      font-size: 12px;
+      color: rgba(20,17,14,.52);
+    }
+
+    @media (max-width: 600px) {
+      .formCard { padding: 22px 16px; }
+      .formGrid { grid-template-columns: 1fr; }
+    }
+
+    /* ── Footer ── */
+    .foot {
+      padding: 18px 0 36px;
+      color: rgba(20,17,14,.58);
+      font-size: 12px;
+      line-height: 1.8;
+    }
+
+    .spacer { height: 12px; }
+
+    /* ── Responsive ── */
+    @media (max-width: 980px) {
+      .nav { display: none; }
+      .heroBody { grid-template-columns: 1fr; }
+      .grid { grid-template-columns: 1fr; }
+      .stepsGrid { grid-template-columns: 1fr; }
+      .statsGrid { grid-template-columns: repeat(2, 1fr); }
+      .mediaGrid { grid-template-columns: 1fr; }
+      iframe { height: 640px; }
+    }
+
+    @media (max-width: 480px) {
+      .statsGrid { grid-template-columns: 1fr 1fr; }
+      .ctaCard { padding: 28px 18px; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ═══════════════ TOPBAR ═══════════════ -->
+  <header class="topbar" id="top">
+    <div class="wrap">
+      <div class="inner">
+        <div class="brand">
+          <span class="logo" aria-hidden="true"></span>
+          <span>kenjispark｜AI士業ラボ</span>
+          <span class="pill">AI × 士業DX</span>
+        </div>
+
+        <nav class="nav" aria-label="ページ内ナビ">
+          <a href="#overview">kenjisparkとは</a>
+          <a href="#services">提供サービス</a>
+          <a href="#stats">導入効果</a>
+          <a href="#media">デモ動画</a>
+          <a href="#pdf">資料</a>
+          <a href="#excel">AIワークフロー</a>
+          <a href="#contact">相談する</a>
+        </nav>
+
+        <a class="btn primary" href="#contact">無料AI業務診断</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- ═══════════════ HERO ═══════════════ -->
+  <main class="hero">
+    <div class="wrap">
+      <div class="heroCard">
+        <div class="heroTop">
+          <div class="chips">
+            <span class="chip"><b>AI業務翻訳</b></span>
+            <span class="chip">NotebookLM × ChatGPT</span>
+            <span class="chip">士業DXの実務設計</span>
+          </div>
+          <a class="btn dark" href="#excel">AIワークフローを見る</a>
+        </div>
+
+        <div class="heroBody">
+          <div>
+            <h1>AIは副操縦士。<br>士業は"組織のドクター"へ。</h1>
+            <p class="lead">
+              kenjisparkは、AIで士業の業務を拡張する専門ラボです。<br>
+              NotebookLM・ChatGPT・n8n を組み合わせ、<br>
+              "安全で、嘘をつかず、実務で使えるAI" を設計します。<br>
+              定型業務を70〜80%削減し、専門家としての価値を最大化します。
+            </p>
+            <div class="heroActions">
+              <a class="btn primary" href="#media">デモを見る</a>
+              <a class="btn ghost" href="#pdf">資料を読む</a>
+              <a class="btn ghost" href="#overview">kenjisparkとは</a>
+            </div>
+          </div>
+
+          <aside class="side" aria-label="要点">
+            <div class="sideCard">
+              <h3>✅ kenjisparkの役割</h3>
+              <p>士業の判断基準・思考プロセスをAIに翻訳し、実務で使える形に設計します。</p>
+            </div>
+            <div class="sideCard">
+              <h3>🎯 提供価値</h3>
+              <p>法令検索90%効率化、分析作業83%削減、就業規則チェック80%削減を実現。</p>
+            </div>
+            <div class="sideCard">
+              <h3>🛡 安全性</h3>
+              <p>NotebookLMの「引用」機能により、AIの回答根拠を即確認できます。</p>
+            </div>
+          </aside>
+        </div>
+
+        <!-- Infographic -->
+        <div class="heroImgRow">
+          <img src="kenjispark-hero-bg.png"
+               alt="kenjispark：AIで士業を「組織のドクター」へ拡張する専門ラボ – 業務削減と信頼性の両立、3つのコアサービス"
+               loading="eager" />
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <div class="wrap">
+
+    <!-- ═══════════════ OVERVIEW ═══════════════ -->
+    <section id="overview">
+      <div class="sectionTitle">
+        <h2>kenjisparkとは</h2>
+        <p>AIで士業の業務を拡張する専門ラボ。NotebookLMとChatGPTを組み合わせ、実務に耐えるAIを設計します。</p>
+      </div>
+
+      <div class="grid">
+        <div class="card">
+          <h3>AI業務翻訳</h3>
+          <p>士業の判断基準・思考プロセスを構造化し、AIに実装します。「ツールを使う」ではなく「業務を翻訳する」が核心です。</p>
+        </div>
+        <div class="card">
+          <h3>守りのDX</h3>
+          <p>法令検索・就業規則チェック・FAQ生成など、定型業務を自動化。NotebookLMで"嘘をつかないAI"を実現します。</p>
+        </div>
+        <div class="card">
+          <h3>攻めのDX</h3>
+          <p>法改正FAQ、音声解説、マインドマップ、研修資料をAIで生成。顧問価値を高める情報発信を支援します。</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════ SERVICES ═══════════════ -->
+    <section id="services">
+      <div class="sectionTitle">
+        <h2>提供サービス</h2>
+        <p>AIで士業の価値を最大化するための、実務特化サービス群です。</p>
+      </div>
+
+      <div class="grid">
+        <div class="card">
+          <h3>AIヘルプデスク構築</h3>
+          <p>就業規則・マニュアルをAI化し、24時間対応の社内ヘルプデスクを構築。問い合わせ対応工数を大幅削減します。</p>
+        </div>
+        <div class="card">
+          <h3>NotebookLM導入支援</h3>
+          <p>ナレッジベース構築、引用付き回答、法令横断レビューを実務に最適化。導入から運用定着まで伴走します。</p>
+        </div>
+        <div class="card">
+          <h3>n8n × ChatGPT 自動化</h3>
+          <p>問い合わせ処理、顧問先管理、書類作成ワークフローを自動化。手作業のボトルネックを解消します。</p>
+        </div>
+        <div class="card">
+          <h3>AI診断・判断システム設計</h3>
+          <p>在留資格診断、助成金ナビ、労務リスク判定など、判断基準をAIに実装する設計・開発を行います。</p>
+        </div>
+        <div class="card">
+          <h3>AI情報発信パッケージ</h3>
+          <p>法改正ポッドキャスト、FAQ自動生成、マインドマップ、セミナー台本など、顧問先への情報発信をAIで支援。</p>
+        </div>
+        <div class="card">
+          <h3>AI業務レビュー・改善</h3>
+          <p>既存のAI活用を"実務で使える形"に整える。説明責任・安全性・運用フローの観点で改善提案を行います。</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════ STATS ═══════════════ -->
+    <section id="stats">
+      <div class="sectionTitle">
+        <h2>導入効果</h2>
+        <p>NotebookLM・ChatGPT・n8n を組み合わせた実務DXの実測データです。</p>
+      </div>
+
+      <div class="statsGrid">
+        <div class="statCard">
+          <div class="num">90%↑</div>
+          <div class="label">法令検索<br>効率化</div>
+        </div>
+        <div class="statCard">
+          <div class="num">83%↓</div>
+          <div class="label">分析作業時間<br>（3h → 30min）</div>
+        </div>
+        <div class="statCard">
+          <div class="num">80%↓</div>
+          <div class="label">就業規則<br>チェック時間</div>
+        </div>
+        <div class="statCard">
+          <div class="num">60%↓</div>
+          <div class="label">レポート<br>作成時間</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════ SCENES ═══════════════ -->
+    <section id="scenes">
+      <div class="sectionTitle">
+        <h2>即活用できる5つのシーン</h2>
+        <p>社労士業務で明日から使えるAI活用シーンを厳選しました。</p>
+      </div>
+
+      <div class="grid">
+        <div class="card">
+          <h3>法令・通達の理解支援</h3>
+          <p>調査3時間→30分に短縮。NotebookLMの引用機能で根拠を即確認できます。</p>
+        </div>
+        <div class="card">
+          <h3>就業規則チェック</h3>
+          <p>チェック時間80%削減。条文のリスク・代替案・判例傾向までAIが提示します。</p>
+        </div>
+        <div class="card">
+          <h3>労務相談・FAQ作成</h3>
+          <p>よくある相談の70%をAIが自動回答。顧問先への説明資料も同時生成します。</p>
+        </div>
+        <div class="card">
+          <h3>外国人雇用サポート</h3>
+          <p>在留資格の判定を10分で。要件確認・必要書類リストまでAIが一貫対応します。</p>
+        </div>
+        <div class="card">
+          <h3>研修資料・セミナー準備</h3>
+          <p>準備時間50%削減。スライド構成・台本・配布資料をAIで一気に生成します。</p>
+        </div>
+        <div class="card">
+          <h3>顧問先レポート自動生成</h3>
+          <p>月次レポートや法改正速報をAIで作成。顧問価値を目に見える形で届けます。</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════ MEDIA ═══════════════ -->
+    <section id="media">
+      <div class="sectionTitle">
+        <h2>デモ動画・音声</h2>
+        <p>AIの動きを「動画で理解 → 音声で復習 → PDFで整理」の順で掴むのが最短です。</p>
+      </div>
+
+      <div class="card">
+        <div class="mediaGrid">
+          <div>
+            <div class="tiny">🎬 デモ動画：<b>NotebookLM × AI業務翻訳の実践.mp4</b></div>
+            <div class="spacer"></div>
+            <div class="frame">
+              <video controls preload="metadata">
+                <source src="notebooklm_demo.mp4" type="video/mp4" />
+                お使いのブラウザは video タグに対応していません。
+              </video>
+            </div>
+          </div>
+
+          <div>
+            <div class="tiny">🎧 音声：<b>AIで士業の業務を拡張するとは何か.m4a</b></div>
+            <div class="spacer"></div>
+            <audio controls preload="metadata">
+              <source src="ai_shigyo_overview.m4a" type="audio/mp4" />
+              お使いのブラウザは audio タグに対応していません。
+            </audio>
+            <div class="spacer"></div>
+            <a class="btn dark" href="#pdf">次：資料で深掘りする →</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════ PDF ═══════════════ -->
+    <section id="pdf">
+      <div class="sectionTitle">
+        <h2>NotebookLM活用ガイド（PDF）</h2>
+        <p>引用付き回答・横断レビュー・ナレッジ統合など、実務で使えるAIの仕組みをまとめています。</p>
+      </div>
+
+      <div class="card">
+        <h3>📄 kenjispark_NotebookLM_Guide.pdf</h3>
+        <p class="tiny">
+          ※ローカル直開きでiframeが出ない場合は、フォルダで <b>python -m http.server</b> を実行してブラウザから開くと安定します。
+        </p>
+
+        <div class="spacer"></div>
+
+        <iframe
+          src="kenjispark_NotebookLM_Guide.pdf#view=FitH"
+          title="NotebookLM活用ガイド"
+          loading="lazy">
+        </iframe>
+
+        <div class="spacer"></div>
+
+        <div style="display:flex; gap:12px; flex-wrap:wrap;">
+          <a class="btn dark" href="kenjispark_NotebookLM_Guide.pdf" target="_blank" rel="noopener">別タブで開く</a>
+          <a class="btn primary" href="kenjispark_NotebookLM_Guide.pdf" download>PDFをダウンロード</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════ REFERENCE PDF ═══════════════ -->
+    <section id="ref">
+      <div class="sectionTitle">
+        <h2>参考資料（追加PDF）</h2>
+        <p>AI業務翻訳・RAG・自動化の基礎を補足する資料です。</p>
+      </div>
+
+      <div class="downloadRow">
+        <div>
+          <h3>📎 AI業務翻訳の設計原則.pdf</h3>
+          <p>判断基準の構造化・ナレッジ分解・AI実装の流れを整理した補助資料です。</p>
+        </div>
+
+        <div style="display:flex; gap:12px; flex-wrap:wrap;">
+          <a class="btn dark" href="AI業務翻訳の設計原則.pdf" target="_blank" rel="noopener">別タブで開く</a>
+          <a class="btn primary" href="AI業務翻訳の設計原則.pdf" download>PDFをダウンロード</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════ EXCEL ═══════════════ -->
+    <section id="excel">
+      <div class="sectionTitle">
+        <h2>AIワークフロー（Excel）</h2>
+        <p>NotebookLM・ChatGPT・n8n を組み合わせた「実務で使えるAIフロー」を一覧化しています。</p>
+      </div>
+
+      <div class="downloadRow">
+        <div>
+          <h3>📊 kenjispark_AI_Workflows.xlsx</h3>
+          <p>AIヘルプデスク、就業規則レビュー、FAQ生成、自動化フローなどをまとめた実務用テンプレートです。</p>
+        </div>
+
+        <div style="display:flex; gap:12px; flex-wrap:wrap;">
+          <a class="btn primary" href="kenjispark_AI_Workflows.xlsx" download>Excelをダウンロード</a>
+          <a class="btn ghost" href="#top">上に戻る</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════ STEPS ═══════════════ -->
+    <section id="steps">
+      <div class="sectionTitle">
+        <h2>導入ステップ</h2>
+        <p>理解 → 体験 → 実践への完全な導線で、確実にAIを実務に定着させます。</p>
+      </div>
+
+      <div class="stepsGrid">
+        <div class="stepCard">
+          <div class="stepNum">1</div>
+          <h3>データフォーマット監査（無料）</h3>
+          <p>NotebookLMで資料が読めるか確認。業務フローの棚卸しと、AI化の優先順位を整理します。</p>
+        </div>
+        <div class="stepCard">
+          <div class="stepNum">2</div>
+          <h3>守りのDXパイロット</h3>
+          <p>AIヘルプデスク・FAQ生成・就業規則レビューなど、効果が出やすい業務からAI化を開始します。</p>
+        </div>
+        <div class="stepCard">
+          <div class="stepNum">3</div>
+          <h3>攻めのDXへ展開</h3>
+          <p>カスタム指示・Studio機能・n8n自動化で、情報発信・顧問先レポート・セミナー準備を拡張します。</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════ ROI ═══════════════ -->
+    <section id="roi">
+      <div class="card" style="text-align:center; padding: 28px;">
+        <h3 style="font-size:18px; margin-bottom:8px;">投資対効果（ROI）</h3>
+        <p style="font-size:14px; line-height:1.85; color:rgba(20,17,14,.72); max-width:56ch; margin:0 auto;">
+          NotebookLM Pro版 月額2,900円で、月10時間削減 ＝ 数万円の価値。<br>
+          AI導入はコストではなく、<strong>"時間を買い戻す投資"</strong>です。
+        </p>
+      </div>
+    </section>
+
+    <!-- ═══════════════ CTA / CONTACT FORM ═══════════════ -->
+    <section id="contact">
+      <div class="formCard">
+        <h2>無料AI業務診断を申し込む</h2>
+        <p>あなたの事務所・顧問先の業務をAIでどこまで拡張できるか、無料で診断します。以下のフォームからお気軽にご連絡ください。</p>
+
+        <form action="mailto:info@kenjispark.jp" method="post" enctype="text/plain">
+          <div class="formGrid">
+
+            <div class="formGroup">
+              <label>お名前 <span class="req">必須</span></label>
+              <input type="text" name="name" required placeholder="例：新井 健二" />
+            </div>
+
+            <div class="formGroup">
+              <label>メールアドレス <span class="req">必須</span></label>
+              <input type="email" name="email" required placeholder="例：info@example.jp" />
+            </div>
+
+            <div class="formGroup">
+              <label>事務所名（任意）</label>
+              <input type="text" name="office" placeholder="例：おぶすま社会保険労務士事務所" />
+            </div>
+
+            <div class="formGroup">
+              <label>業種 <span class="req">必須</span></label>
+              <select name="industry" required>
+                <option value="" disabled selected>選択してください</option>
+                <option value="社労士">社会保険労務士</option>
+                <option value="行政書士">行政書士</option>
+                <option value="税理士">税理士</option>
+                <option value="弁護士">弁護士</option>
+                <option value="企業人事">企業人事</option>
+                <option value="その他">その他</option>
+              </select>
+            </div>
+
+            <div class="formGroup full">
+              <label>現在、最も時間がかかっている業務</label>
+              <textarea name="current_tasks" rows="3" placeholder="例：就業規則チェック、法令調査、助成金申請書類の作成など"></textarea>
+            </div>
+
+            <div class="formGroup full">
+              <label>AIで改善したい業務</label>
+              <textarea name="ai_targets" rows="3" placeholder="例：問い合わせ対応の自動化、顧問先レポートの自動生成など"></textarea>
+            </div>
+
+            <div class="formGroup">
+              <label>使用しているツール</label>
+              <textarea name="tools" rows="2" placeholder="例：ChatGPT、NotebookLM、Excel、kintoneなど"></textarea>
+            </div>
+
+            <div class="formGroup">
+              <label>AI導入の目的</label>
+              <textarea name="purpose" rows="2" placeholder="例：定型業務の削減、顧問先への付加価値向上など"></textarea>
+            </div>
+
+            <div class="formGroup full">
+              <label>現在の課題・困っていること <span class="req">必須</span></label>
+              <textarea name="message" rows="5" required placeholder="例：ChatGPTを試したが実務に落とし込めない、AIの回答が信頼できず使えないなど"></textarea>
+            </div>
+
+            <div class="formGroup">
+              <label>導入希望時期</label>
+              <select name="timeline">
+                <option value="すぐに">すぐに</option>
+                <option value="1ヶ月以内">1ヶ月以内</option>
+                <option value="3ヶ月以内">3ヶ月以内</option>
+                <option value="未定" selected>未定</option>
+              </select>
+            </div>
+
+            <div class="formSubmitRow">
+              <button class="btn primary" type="submit">無料AI業務診断を申し込む</button>
+              <span class="note">※ 送信後、メーラーが起動します。内容を確認して送信してください。</span>
+            </div>
+
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- ═══════════════ FOOTER ═══════════════ -->
+    <div class="foot">
+      © kenjispark｜AI士業ラボ<br>
+      ※本ページは、AI活用素材を1ページに統合したデモです。実運用時は、免責・プライバシー・引用/出典表記等を用途に合わせて調整してください。
+    </div>
+
+  </div><!-- /.wrap -->
+
+</body>
+</html>
